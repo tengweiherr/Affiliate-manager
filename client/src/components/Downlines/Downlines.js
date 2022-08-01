@@ -28,9 +28,9 @@ const Downlines = () => {
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
 
+    //error
     const [error, setError] = useState("");
     
-
     useEffect(() => {
       
         fetch(API_URL + 'downline/' + referral, {
