@@ -1,0 +1,86 @@
+@import "~bootstrap/scss/bootstrap.scss";
+@import '../../variables';
+
+
+@media (min-width: $breakpoint-tablet) {
+    .tight-container{
+        width:80% !important;
+    }
+    .cycle-profit-upper, .cycle-profit-bottom, .cycle-profit-upper-inner{
+        align-items: start;
+    }
+}
+
+@media (max-width: $breakpoint-mobile) {
+    .cycle-profit-upper, .cycle-profit-bottom{
+        align-items: center;
+    }
+    .cycle-profit-upper-inner{
+        h5{
+            text-align: center;
+        }
+    }
+}
+
+.overview{
+    p{
+        text-align: left;
+        margin: 8px;
+    }
+
+    td{
+        background-color: #f8f8f8 !important;
+        border-color: #e6e6e6 !important;
+        border-width: 1px;
+    &.content{
+        p{
+            text-align: right;
+        }
+    }
+    }
+
+}
+
+.detail{
+    p{
+        text-align: left;
+        margin: 8px;
+    }
+    th, td{
+        background-color: #f8f8f8 !important;
+        border-color: #e6e6e6 !important;
+        border-width: 1px;
+
+        &.commission {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+    
+            a.edit{
+                display:none;
+                cursor: pointer;
+            }
+            
+            &:hover{
+                a.edit{
+                    display:block;
+                }
+            }
+        }
+    }
+    tr.false{
+        td{
+            background-color: #a0a0a0 !important;
+        }
+        td.commission {            
+            &:hover{
+                a.edit{
+                    display:none;
+                }
+            }
+        }
+    }
+
+}
+

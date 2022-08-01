@@ -1,0 +1,36 @@
+@import "~bootstrap/scss/bootstrap.scss";
+
+.loginScreen {
+  width: 100vw;
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .authform {
+    width: 500px;
+    height: fit-content;
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    backdrop-filter: blur(30px);
+
+    .inputRow,
+    .submitRow {
+      margin-bottom: 20px;
+    }
+
+    .backRow {
+      width: 200px;
+      margin: 0 auto;
+    }
+  }
+  .input-group{
+    padding: 0px;
+    .btn{
+      background-color: #1b4971;
+      font-size: 14px;
+    }
+  }
+}

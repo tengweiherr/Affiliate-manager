@@ -1,0 +1,10 @@
+export const CREATE = 'CREATE';
+export const UPDATE = 'UPDATE';
+export const DELETE = 'DELETE';
+export const FETCH_ALL = 'FETCH_ALL';
+export const CREATE_CYCLE = 'CREATE_CYCLE';
+export const UPDATE_CYCLE = 'UPDATE_CYCLE';
+export const DELETE_CYCLE = 'DELETE_CYCLE';
+export const FETCH_ALL_CYCLE = 'FETCH_ALL_CYCLE';
+export const LOGIN = "LOGIN";
+export const LOGOUT = "LOGOUT";

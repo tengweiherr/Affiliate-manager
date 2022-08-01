@@ -1,0 +1,51 @@
+@import "~bootstrap/scss/bootstrap.scss";
+@import '../../variables';
+
+.tight-container{
+    @media (min-width: $breakpoint-desktop) {
+        width:80% !important;
+    }
+    @media (max-width: $breakpoint-mobile) {
+        width:100% !important;
+    }
+}
+
+    p{
+        text-align: left;
+        margin: 8px;
+    }
+
+    th, td{
+        background-color: #f8f8f8 !important;
+        border-color: #e6e6e6 !important;
+        border-width: 1px !important;
+        padding: 10px !important;
+    }
+
+    th{
+        background-color: #ededed !important;
+    }
+
+    .react-datetime-picker {
+        display: block !important;
+        .react-datetime-picker__wrapper{
+            border: thin solid lightgray;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+    }
+
+    td.action div {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    .total_payout{
+        font-size: 14px;
+        text-align: right;
+        @media (max-width: $breakpoint-mobile) {
+            font-size: 12px;
+            margin-right: 6px !important;
+        }
+    }
