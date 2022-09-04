@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv'
 import downlineRoutes from './routes/downline.js';
-import cycleRoutes from './routes/cycle.js';
 import userRoutes from './routes/user.js';
 
 
@@ -18,10 +17,7 @@ app.use(cors({
 }));
 
 app.use('/downline',downlineRoutes);
-app.use('/cycle',cycleRoutes);
 app.use('/user',userRoutes);
-
-
 
 const PORT = process.env.PORT || 5500;
 
