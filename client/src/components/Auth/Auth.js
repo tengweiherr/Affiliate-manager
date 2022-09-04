@@ -1,4 +1,4 @@
-import { Container, FormControl, FormLabel, Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
+import { Container, FormControl, FormLabel, Form, Row, Col, Button, InputGroup, Spinner } from 'react-bootstrap';
 import React, { useState } from 'react';
 // import { login } from '../../actions/login';
 import { useHistory } from 'react-router-dom';
@@ -18,10 +18,14 @@ const Auth = () => {
 
     const [showPassword, setShowPassword] = useState(false);
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleSubmit = (e) => {
+        setIsLoading(true);
         e.preventDefault(); //so that browser dont refresh
         login(loginData)
         .then(result =>{
+            setIsLoading(false);
             if(result){
                 dispatch(authSlice.login(result));
                 history.push('/');
@@ -34,10 +38,10 @@ const Auth = () => {
 
     }
 
-    const handleChange = (e) => {
-        e.preventDefault(); //so that browser dont refresh
-        setLoginData({...loginData,[e.target.name]:e.target.value});
-    }
+    // const handleChange = (e) => {
+    //     e.preventDefault(); //so that browser dont refresh
+    //     setLoginData({...loginData,[e.target.name]:e.target.value});
+    // }
 
     // const handleShowPassword = () => {
     //     setShowPassword((prevShowPassword) => !prevShowPassword)
@@ -57,7 +61,10 @@ const Auth = () => {
                         </InputGroup>
                     </Row>
                     <Row className="submitRow">
+                        {isLoading ? <Spinner animation="border" role="status" className='m-auto'/>
+                        :
                         <Button type="submit" variant="primary" size="md" className="submit-btn">Submit</Button>
+                        }                        
                     </Row>  
                 </Container>
             </Form>

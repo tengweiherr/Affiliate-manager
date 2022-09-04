@@ -37,7 +37,7 @@ const Downlines = () => {
 
     
     useEffect(() => {
-      
+
         fetchDownlines(referral)
             .then(result =>{
                 // setDownlines(result);
@@ -118,7 +118,7 @@ const Downlines = () => {
             <Button onClick={()=>addSelectedData()} className="add-btn">Add</Button>
         </Col>
     </Row>
-    {downlines ? 
+    {downlines.length!==0 ? 
        <Table hover responsive="md" className="rounded-lg" data-testid="downlinesTable">
        <thead>
            <tr>
@@ -186,9 +186,7 @@ const Downlines = () => {
    </Table>    
     :
     <Container className='p-5 d-flex justify-content-center align-items-center'>
-        <Spinner animation="border" role="status">
-            <span className="visually-hidden">Loading...</span>
-        </Spinner>
+        <Spinner animation="border" role="status"/>
     </Container>
     }
     <Modal
