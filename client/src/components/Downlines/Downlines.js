@@ -1,89 +1,83 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getDownline, createDownline, updateDownline, deleteDownline } from '../../actions/downline'
 import Table from 'react-bootstrap/Table';
 import { Button, Col, Dropdown, Modal, Row, Form, Spinner, Container } from 'react-bootstrap';
 import "./Downlines.scss";
 import { useHistory } from 'react-router-dom';
 import DateTimePicker from 'react-datetime-picker'
+import { fetchDownlines, createNewDownline, updateDownline, deleteDownline } from '../../api';
+import * as downlineSlice from '../../store/slices/downlineSlice';
+
 
 const Downlines = () => {
 
-    const API_URL = process.env.REACT_APP_API_URL;
-
-    const [currentId, setCurrentId] = useState(null);
-    const [downlines, setDownlines] = useState();
+    const dispatch = useDispatch();
+    const downlines = useSelector(state => state.downline);
     const [referral, setReferral] = useState('');
+    const [selectedData, setSelectedData] = useState({
+        name: '', tfxi_id: 0, attachment: 1000, referral: 'dawson', fund: 'GMC', join_date: new Date(), referral_fee: 50
+    });
 
     const [show, setShow] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
-    const history = useHistory();
+    const [action, setAction] = useState("");
 
-    const handleClose = () => setShow(false);
+    //error
+    const [error, setError] = useState("");
+
+    const handleClose = () => {
+        setShow(false);
+        setSelectedData({name: '', tfxi_id: 0, attachment: 1000, referral: 'dawson', fund: 'GMC', join_date: new Date(), referral_fee: 50});
+      };
     const handleShow = () => setShow(true);
 
     const handleCloseConfirm = () => setShowConfirm(false);
     const handleShowConfirm = () => setShowConfirm(true);
 
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
-
-    //error
-    const [error, setError] = useState("");
     
     useEffect(() => {
       
-        fetch(API_URL + 'downline/' + referral, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-          })
-            .then(data => data.json())
+        fetchDownlines(referral)
             .then(result =>{
-                setDownlines(result);
+                // setDownlines(result);
+                dispatch(downlineSlice.getDownlines(result));
             })
             .catch(err=>{
                 console.log(err);
             })
     
-    }, [referral])
-
-    const [downlineData, setDownlineData] = useState({
-        name: '', tfxi_id: 0, attachment: 1000, referral: 'dawson', fund: 'GMC', join_date: new Date(), referral_fee: 50
-    });
-
-    //useSelector to retrieve data
-    const downline = useSelector((state) => currentId ? state.downlines.find((p) => p._id === currentId) : null);
-
-    //useDispatch to set an action
-    const dispatch = useDispatch();
-
-    //useEffect to set a callback action
-    useEffect(() => {
-        if (downline) { setDownlineData(downline); }
-    }, [downline]);
-
-    //handle submit func
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (currentId) {
-            dispatch(updateDownline(currentId, downlineData));
-        } else {
-            dispatch(createDownline(downlineData));
-        }
-        clear();
-        handleClose();
-    }
-
-    const clear = () => {
-        setCurrentId(null);
-        setDownlineData({name: '', tfxi_id: 0, attachment: 1000, referral: 'dawson', fund: 'GMC', join_date: new Date(), referral_fee: 50});
-    }
+    }, [referral,dispatch])
 
     const handleDelete = () => {
-        dispatch(deleteDownline(currentId));
-        setCurrentId(null);
+        deleteDownline(selectedData)
+    }
+
+    const updateSelectedData = (downline) => {
+        setSelectedData(downline);
+        setAction("Edit");
+        handleShow();
+    }
+
+    const addSelectedData = () => {
+        setAction("Add");
+        handleShow();
+    }
+
+    //handle submit func
+    const handleSubmit = () => {
+
+        switch (action) {
+            case "Edit":
+                updateDownline(selectedData);
+                break;
+            case "Add":
+                createNewDownline(selectedData);
+                break;        
+            default:
+                break;
+        }
+        window.location.reload();
     }
 
     const calculateTotal = () => {
@@ -96,8 +90,6 @@ const Downlines = () => {
     }
 
     return (
-    <>
-    {user ? 
     <Container style={{backgroundColor:"#fff"}} className="p-4 rounded-lg tight-container">
     <Row className="mb-2">
         <Col md={9} xs={4}>
@@ -118,15 +110,16 @@ const Downlines = () => {
                 </Dropdown.Menu>
             </Dropdown>
         </Col>
+        
         <Col md={3} xs={8} className="d-flex justify-content-end">
             {downlines && 
-                <p className='m-auto total_payout'>Total: USD {calculateTotal()}</p>
+                <p data-testid="totalUSD" className='m-auto total_payout'>Total: USD {calculateTotal()}</p>
             }
-            <Button onClick={handleShow} className="add-btn">Add</Button>
+            <Button onClick={()=>addSelectedData()} className="add-btn">Add</Button>
         </Col>
     </Row>
     {downlines ? 
-       <Table hover responsive="md" className="rounded-lg">
+       <Table hover responsive="md" className="rounded-lg" data-testid="downlinesTable">
        <thead>
            <tr>
                <th className="tfxi-id">
@@ -154,7 +147,7 @@ const Downlines = () => {
        </thead>
        <tbody>
            {downlines.map((downline, index)=>(
-               <tr key={index} className={`${downline.referral}`}>
+               <tr key={index} className={`${downline.referral}`} data-testid="downlinesRow">
                    <td className='tfxi_id'>
                        {downline.tfxi_id} 
                    </td>
@@ -175,24 +168,13 @@ const Downlines = () => {
                    </td>
                    <td className='action'>
                        <div className='m-auto'>
-                        <a className='edit-icon' href='#' 
-                            onClick={(e)=>{
-                                setCurrentId(downline._id);
-                                setDownlineData({
-                                    name: downline.name,
-                                    tfxi_id: downline.tfxi_id,
-                                    attachment: downline.attachment,
-                                    referral: downline.referral,
-                                    fund: downline.fund,
-                                    join_date: downline.join_date
-                                });
-                                handleShow();
-                                }}>
+                        <button className='edit-icon' 
+                            onClick={()=>{updateSelectedData(downline)}}>
                             <EditIcon/>
-                        </a>
-                            <a className='trash-icon' href='#' onClick={(e)=>{handleShowConfirm();setCurrentId(downline._id)}}>
+                        </button>
+                        <button className='trash-icon' onClick={(e)=>{setSelectedData(downline);handleShowConfirm();}}>
                             <TrashIcon/>
-                        </a>
+                        </button>
                        </div>
                    </td>
                </tr>
@@ -216,17 +198,17 @@ const Downlines = () => {
         keyboard={false}
       >
         <Modal.Header>
-          <Modal.Title>{currentId ? "Edit" : "Add New"}</Modal.Title>
+          <Modal.Title>{action}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
         <Form>
         <Form.Group className="mb-3" controlId="tfxi_id">
                 <Form.Label>TFXI ID</Form.Label>
                 <Form.Control type="number" placeholder="TFXI ID" 
-                value={downlineData.tfxi_id} 
+                value={selectedData.tfxi_id} 
                 onChange={(e) => {
                     if(!isNaN(parseInt(e.target.value)))
-                    setDownlineData({ ...downlineData, tfxi_id: parseInt(e.target.value)})
+                    setSelectedData({ ...selectedData, tfxi_id: parseInt(e.target.value)})
                 }}
                 onKeyUp={(event)=>{
                     if (!/^\d{7}$/.test(parseInt(event.target.value)))
@@ -239,22 +221,22 @@ const Downlines = () => {
             </Form.Group>
             <Form.Group className="mb-3" controlId="name">
                 <Form.Label>Name</Form.Label>
-                <Form.Control type="text" placeholder="Name" value={downlineData.name} onChange={(e) => setDownlineData({ ...downlineData, name: e.target.value })}/>
+                <Form.Control type="text" placeholder="Name" value={selectedData.name} onChange={(e) => setSelectedData({ ...selectedData, name: e.target.value })}/>
             </Form.Group>
             <Form.Group className="mb-3" controlId="attachment">
                 <Form.Label>Attachment</Form.Label>
                 <Form.Control type="number" min={0} step={1000} placeholder="Attachment" 
-                    value={downlineData.attachment} 
-                    onChange={(e) => setDownlineData({ ...downlineData, attachment: parseInt(e.target.value)})}/>
+                    value={selectedData.attachment} 
+                    onChange={(e) => setSelectedData({ ...selectedData, attachment: parseInt(e.target.value)})}/>
             </Form.Group>
             <Form.Group className="mb-3" controlId="join_date">
                 <Form.Label>Join At</Form.Label>
-                <DateTimePicker onChange={(value) => setDownlineData({ ...downlineData, join_date: value })} value={new Date(downlineData.join_date)} required/>
-                {/* (e) => setDownlineData({ ...downlineData, join_date: e.target.value }) */}
+                <DateTimePicker onChange={(value) => setSelectedData({ ...selectedData, join_date: value })} value={new Date(selectedData.join_date)} required/>
+                {/* (e) => setSelectedData({ ...selectedData, join_date: e.target.value }) */}
             </Form.Group>
             <Form.Group className="mb-3" controlId="referral">
                 <Form.Label>Referral</Form.Label>
-                <Form.Control as="select" placeholder="Referral" name="Referral" value={downlineData.referral} onChange={(e) => setDownlineData({ ...downlineData, referral: e.target.value })}>
+                <Form.Control as="select" placeholder="Referral" name="Referral" value={selectedData.referral} onChange={(e) => setSelectedData({ ...selectedData, referral: e.target.value })}>
                 <option value="dawson">Dawson</option>
                 <option value="khoo">Khoo</option>
                 <option value="weiherr">Weiherr</option>
@@ -264,21 +246,21 @@ const Downlines = () => {
                 <option value="others">Others</option>
                 </Form.Control>          
             </Form.Group>
-            {downlineData.referral === "others" && 
+            {selectedData.referral === "others" && 
             <Form.Group className="mb-3" controlId="referral_fee">
                 <Form.Label>Referral Fee</Form.Label>
-                <Form.Control type="number" min={0} step={10} placeholder="Referral Fee" value={downlineData.referral_fee} onChange={(e) => setDownlineData({ ...downlineData, referral_fee: parseFloat(e.target.value)})}/>
+                <Form.Control type="number" min={0} step={10} placeholder="Referral Fee" value={selectedData.referral_fee} onChange={(e) => setSelectedData({ ...selectedData, referral_fee: parseFloat(e.target.value)})}/>
             </Form.Group>
             }
             <Form.Group className="mb-3" controlId="fund">
                 <Form.Label>Fund Invested</Form.Label>
-                <Form.Control as="select" placeholder="Fund" name="Fund" value={downlineData.fund} onChange={(e) => setDownlineData({ ...downlineData, fund: e.target.value })}>
+                <Form.Control as="select" placeholder="Fund" name="Fund" value={selectedData.fund} onChange={(e) => setSelectedData({ ...selectedData, fund: e.target.value })}>
                 <option value="GMC">GMC</option>
                 <option value="GMC PAMM">GMC PAMM</option>
                 </Form.Control>         
             </Form.Group>
-            <Button className="submit-btn" onClick={(e)=>{handleSubmit(e)}}>Submit</Button>
-            <Button variant="secondary" className="close-btn mx-2" onClick={()=>{handleClose();clear();}}>Close</Button>
+            <Button className="submit-btn" onClick={handleSubmit}>Submit</Button>
+            <Button variant="secondary" className="close-btn mx-2" onClick={handleClose}>Close</Button>
         </Form>
         </Modal.Body>
       </Modal>
@@ -286,6 +268,7 @@ const Downlines = () => {
       <Modal show={showConfirm} onHide={handleCloseConfirm}>
         <Modal.Body>
             <p>Confirm to delete?</p>
+            <p>{selectedData.tfxi_id}</p>
         </Modal.Body>
         <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseConfirm}>Close</Button>
@@ -293,11 +276,6 @@ const Downlines = () => {
         </Modal.Footer>
         </Modal>
     </Container>
-    :
-    history.push('/login')
-    }
-    </>
-
     );
     
 }

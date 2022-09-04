@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Navbar, Nav, Modal, Button } from 'react-bootstrap';
 import './styles.scss';
-
 import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Auth from './components/Auth/Auth';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Downlines from './components/Downlines/Downlines';
 import Information from './components/Information/Information';
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const App = () => {
 
@@ -16,7 +16,7 @@ const App = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
+    const user = useSelector(state => state.auth)
 
     const parseJwt = (token) => {
         try {
@@ -25,7 +25,7 @@ const App = () => {
           return null;
         }
       };
-    
+
     return (
         <BrowserRouter>
         {user &&
@@ -51,9 +51,13 @@ const App = () => {
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Col sm={3}>
                         <Navbar.Collapse className="me-auto justify-content-end">
+                            {user && 
+                            <>
                                 <Nav.Link href="/calculator">Calculator</Nav.Link>
                                 <Nav.Link href="/downlines">Downlines</Nav.Link>
                                 <Nav.Link href="#" onClick={handleShow}>Information</Nav.Link>  
+                            </>
+                            }
                             <Login/>
                         </Navbar.Collapse>
                     </Col>
@@ -62,10 +66,26 @@ const App = () => {
           </Navbar>
           <Container fluid className='p-4'>
                 <Switch>
-                    <Route path="/" exact component={Home}/>
-                    <Route path="/login" exact component={Auth}/>
-                    <Route path="/calculator" exact component={Home}/>
-                    <Route path="/downlines" exact component={Downlines}/>
+                    {user ? 
+                    <>
+                        <Route path="/" exact component={Home}/>
+                        <Route path="/login" exact component={Auth}/>
+                        <Route path="/calculator" exact component={Home}/>
+                        <Route path="/downlines" exact component={Downlines}/>
+                    </>
+                    :
+                    <>
+                        <Route
+                            exact
+                            path="*"
+                            render={() => (
+                                <Redirect to="/login" /> 
+                            )}
+                        />
+                        <Route path="/login" exact component={Auth}/>
+                    </>                    
+                    }
+
                 </Switch>
           </Container>
           <Modal show={show} onHide={handleClose}>

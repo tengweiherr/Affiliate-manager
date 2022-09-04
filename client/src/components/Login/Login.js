@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { Link, useHistory, useLocation } from 'react-router-dom';
+import * as authSlice from '../../store/slices/authSlice';
+
 
 import './styles.scss';
 
@@ -20,8 +22,9 @@ const Login = () => {
     }, [location]);
 
     const logout = () => {
-        dispatch({ type: 'LOGOUT' });
-        history.push('/');
+        // dispatch({ type: 'LOGOUT' });
+        dispatch(authSlice.logout())
+        history.push('/login');
         setUser(null);
     }
 

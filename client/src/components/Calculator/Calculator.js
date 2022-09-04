@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from 'react-redux';
 import { Button, Col, Container, Dropdown, Form, InputGroup, Modal, Row, Spinner, Table } from 'react-bootstrap';
 import './Calculator.scss';
+import { fetchDownlines, createNewDownline, updateDownline, deleteDownline } from '../../api';
+import * as downlineSlice from '../../store/slices/downlineSlice';
 
-export const Calculator = ({ currentCycleId, setCurrentCycleId, setCurrentTotalReturn }) => {
-
-    const API_URL = process.env.REACT_APP_API_URL;
+export const Calculator = () => {
 
     //data
-    const [downlines, setDownlines] = useState();
+    const downlines = useSelector(state => state.downline);
     const [filteredDownlines, setFilteredDownlines] = useState();
     const [referral, setReferral] = useState('');
 
@@ -59,16 +60,8 @@ export const Calculator = ({ currentCycleId, setCurrentCycleId, setCurrentTotalR
 
     useEffect(() => {
       
-        fetch(API_URL + 'downline/', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-          })
-            .then(data => data.json())
+        fetchDownlines(referral)
             .then(results =>{
-
-                setDownlines(results);
                 setFilteredDownlines(results);
 
                 for (let index = 0; index < results.length; index++) {
@@ -150,8 +143,6 @@ export const Calculator = ({ currentCycleId, setCurrentCycleId, setCurrentTotalR
                 for (let index = 0; index < dawson.length; index++) {
                     if(dawson[index].checked === true){
                         totalCommission += parseFloat(parseInt(dawson[index].attachment/1000)*_commission);
-
-                        console.log(_commission);
 
                         if(calculateYearDifference(dawson[index].join_date) < 1)
                         referralFee += parseFloat(parseInt(dawson[index].attachment/1000)*(50/12));
@@ -384,7 +375,7 @@ const handleSubmit = () => {
                                 <h5>Cycle Profit</h5>                       
                             </Form.Label>
                             <div style={{display:"flex", flexDirection:"horizontal",alignItems:"center"}}>
-                            <Form.Control type="number" min="0" step="0.01" placeholder="Cycle Profit" style={{width:150, marginRight:8}} 
+                            <Form.Control type="number" min="0" step="0.01" placeholder="Cycle Profit" data-testid="cycleProfitInput" style={{width:150, marginRight:8}} 
                                 onChange={(event)=>{
                                     if (!isNaN(parseFloat(event.target.value)))
                                         setForm((prevState) => ({
@@ -395,13 +386,16 @@ const handleSubmit = () => {
                                 onKeyUp={(event)=>{
                                     if (isNaN(parseFloat(event.target.value)))
                                         setError("Please input valid number");
+
+                                    else if (parseFloat(event.target.value) < 0)
+                                        setError("Minimum is 0")
                                     else setError("");
                                 }}
                                 />
                             USD
                             </div>
-                            <p className="error-text">{error}</p>                      
-                            <Button variant="primary" className="submit-btn rounded mb-3" onClick={()=>onSubmit()}>
+                            <p className="error-text" data-testid="cycleProfitError">{error}</p>                      
+                            <Button variant="primary" data-testid="calculateBtn" className="submit-btn rounded mb-3" disabled={error!==""} onClick={()=>onSubmit()}>
                                 Calculate
                             </Button>
                         </Form.Group>
@@ -421,6 +415,7 @@ const handleSubmit = () => {
                                     value={2}
                                     defaultChecked={true}
                                     onChange={(e)=>setDecimal(parseInt(e.target.value))}
+                                    data-testid="decimalPlaces2"
                                 />
                                 <Form.Check
                                     inline
@@ -430,6 +425,7 @@ const handleSubmit = () => {
                                     id='3-decimal-place'
                                     value={3}
                                     onChange={(e)=>setDecimal(parseInt(e.target.value))}
+                                    data-testid="decimalPlaces3"
                                 />  
                                 {}
                             </div>
@@ -452,6 +448,7 @@ const handleSubmit = () => {
                                         setCurrency("usd");
                                         setRate(1);
                                     }}
+                                    data-testid="currencyUSD"
                                 />
                                 <Form.Check
                                     inline
@@ -461,6 +458,7 @@ const handleSubmit = () => {
                                     id='myr'
                                     value="myr"
                                     onChange={(e)=>setCurrency("myr")}
+                                    data-testid="currencyMYR"
                                 />
                                 {currency === "myr" && 
                                 <Form.Control type="number" min="0" step="0.001" placeholder="USD to MYR" className="position-absolute" style={{width:150, left:150}} 
@@ -469,6 +467,7 @@ const handleSubmit = () => {
                                         if (!isNaN(parseFloat(event.target.value)))
                                         setRate(parseFloat(event.target.value))}
                                     }
+                                    data-testid="currencyMYRInput"
                                 />                                 
                                 }
 
@@ -481,6 +480,7 @@ const handleSubmit = () => {
                             <InputGroup>
                                 <Form.Control type="number" placeholder="Commission Payout in %" style={{width:150, marginRight:8}}
                                 value={payout}
+                                data-testid="commissionPayoutInput"
                                 onChange={(event)=>{
                                     if (!isNaN(parseInt(event.target.value)))
                                     setPayout(parseInt(event.target.value))}
@@ -505,7 +505,7 @@ const handleSubmit = () => {
                                 <p>Main Acc Profit</p>
                             </td>
                             <td className="content">
-                                <p>{(result.main_acc_profit*(rate)).toFixed(decimal)}</p>
+                                <p data-testid="mainAccProfit">{(result.main_acc_profit*(rate)).toFixed(decimal)}</p>
                             </td>
                         </tr>
                         <tr>
@@ -541,7 +541,6 @@ const handleSubmit = () => {
                 <Col sm={6}>
                     <Table hover responsive="md">
                         <tbody>
-                            <thead></thead>
                             <tr>
                                 <td className="head">
                                     <p>Dawson's Commission</p>
@@ -608,7 +607,7 @@ const handleSubmit = () => {
                 </Col>
             </Row>
             {filteredDownlines ? 
-            <Table hover responsive="md" className="detail">
+            <Table hover responsive="md" className="detail" data-testid="downlinesTable">
             <thead>
                 <tr>
                     <th className="tfxi-id">
@@ -639,7 +638,7 @@ const handleSubmit = () => {
             </thead>
             <tbody>
                 {filteredDownlines.map((downline, index)=>(
-                    <tr key={index} className={downline.checked?`${downline.referral}`:`${downline.referral + " " + downline.checked}`}>
+                    <tr data-testid="downlinesRow" key={index} className={downline.checked?`${downline.referral}`:`${downline.referral + " " + downline.checked}`}>
                         <td className='tfxi_id'>
                             {downline.tfxi_id}
                         </td>

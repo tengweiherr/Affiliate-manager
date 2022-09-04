@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Button, Col } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { getDownline } from '../../actions/downline'
-import { getCycle } from '../../actions/cycle'
+// import { getDownline } from '../../actions/downline'
+// import { getCycle } from '../../actions/cycle'
 import './styles.scss';
 import Calculator from '../Calculator/Calculator';
 import { useHistory } from 'react-router-dom';
@@ -20,19 +20,19 @@ const Home = () => {
 
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(getDownline());
-    }, [currentId, dispatch]);
+    // useEffect(() => {
+    //     dispatch(getDownline());
+    // }, [currentId, dispatch]);
 
-    useEffect(() => {
-        dispatch(getCycle());
-    }, [currentCycleId, dispatch]);
+    // useEffect(() => {
+    //     dispatch(getCycle());
+    // }, [currentCycleId, dispatch]);
 
     return (
         <>
         {user ? 
         <Container>
-            <Calculator currentCycleId={currentCycleId} setCurrentCycleId={setCurrentCycleId} setCurrentTotalReturn={setCurrentTotalReturn}/>
+            <Calculator/>
         </Container>  
         :
         history.push('/login')

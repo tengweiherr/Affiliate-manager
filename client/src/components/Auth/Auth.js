@@ -1,9 +1,11 @@
 import { Container, FormControl, FormLabel, Form, Row, Col, Button, InputGroup } from 'react-bootstrap';
 import React, { useState } from 'react';
-import { login } from '../../actions/login';
+// import { login } from '../../actions/login';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import './Auth.scss';
+import * as authSlice from '../../store/slices/authSlice';
+import { login } from '../../api';
 
 
 const Auth = () => {
@@ -18,7 +20,18 @@ const Auth = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault(); //so that browser dont refresh
-        dispatch(login(loginData,history));
+        login(loginData)
+        .then(result =>{
+            if(result){
+                dispatch(authSlice.login(result));
+                history.push('/');
+            }
+        })
+        .catch(err=>{
+            console.log(err.message);
+        })
+        // dispatch(login(loginData,history));
+
     }
 
     const handleChange = (e) => {
@@ -26,9 +39,9 @@ const Auth = () => {
         setLoginData({...loginData,[e.target.name]:e.target.value});
     }
 
-    const handleShowPassword = () => {
-        setShowPassword((prevShowPassword) => !prevShowPassword)
-    }
+    // const handleShowPassword = () => {
+    //     setShowPassword((prevShowPassword) => !prevShowPassword)
+    // }
 
     return (
         <Container className="loginScreen">
@@ -39,8 +52,8 @@ const Auth = () => {
                     </Row>
                     <Row className="inputRow">
                         <InputGroup>
-                            <FormControl name="password" size="md" placeholder="Password" type={showPassword ? "text" : "password"} handleShowPassword={handleShowPassword} value={loginData.password} onChange={(e) => setLoginData({...loginData,password: e.target.value})}></FormControl>
-                            <Button onClick={handleShowPassword}>{showPassword ? "Hide" : "Show"}</Button>
+                            <FormControl name="password" size="md" placeholder="Password" type={showPassword ? "text" : "password"} value={loginData.password} onChange={(e) => setLoginData({...loginData,password: e.target.value})}></FormControl>
+                            <Button onClick={()=>setShowPassword((prevShowPassword) => !prevShowPassword)}>{showPassword ? "Hide" : "Show"}</Button>
                         </InputGroup>
                     </Row>
                     <Row className="submitRow">

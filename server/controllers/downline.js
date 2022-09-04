@@ -25,6 +25,8 @@ export const getDownlineByReferral = async (req, res) => {
 
 export const createDownline = async (req, res) => {
 
+    console.log(req.body);
+
     const downline = req.body;
 
     const newDownline = new DownlineMessage(downline);
