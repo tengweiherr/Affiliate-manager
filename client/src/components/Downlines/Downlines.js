@@ -77,7 +77,7 @@ const Downlines = () => {
             default:
                 break;
         }
-        window.location.reload();
+        // window.location.reload();
     }
 
     const calculateTotal = () => {

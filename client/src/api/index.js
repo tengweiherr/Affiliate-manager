@@ -55,7 +55,19 @@ const createNewDownline = (downline) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(downline),
-  }).then(data => data.json())
+  }).then(async res=>{
+    try {
+      const jsonRes = await res.json();
+      if (res.status !== 201) {
+          console.log(jsonRes.message);
+      } else {
+        console.log(jsonRes.message);
+        window.location.reload();
+      }
+      } catch (err) {
+          console.log(err);
+      };
+  })
 }
 
 const updateDownline = (downline) => {
@@ -72,7 +84,7 @@ const updateDownline = (downline) => {
           console.log(jsonRes.message);
       } else {
         console.log(jsonRes.message);
-        // window.location.reload();
+        window.location.reload();
       }
       } catch (err) {
           console.log(err);
