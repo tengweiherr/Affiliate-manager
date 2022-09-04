@@ -53,9 +53,9 @@ const App = () => {
                         <Navbar.Collapse className="me-auto justify-content-end">
                             {user && 
                             <>
-                                <Nav.Link href="/calculator">Calculator</Nav.Link>
-                                <Nav.Link href="/downlines">Downlines</Nav.Link>
-                                <Nav.Link href="#" onClick={handleShow}>Information</Nav.Link>  
+                                <Nav.Link className="me-4" href="/calculator">Calculator</Nav.Link>
+                                <Nav.Link className="me-4" href="/downlines">Downlines</Nav.Link>
+                                <Nav.Link className="me-4" href="#" onClick={handleShow}>Information</Nav.Link>  
                             </>
                             }
                             <Login/>

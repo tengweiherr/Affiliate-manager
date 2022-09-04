@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, fireEvent, screen, cleanup } from "@testing-library/react";
 import Calculator from "../components/Calculator/Calculator"
 import '@testing-library/jest-dom';
