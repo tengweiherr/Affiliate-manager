@@ -1,12 +1,11 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import downlineReducer from "../store/slices/downlineSlice";
-import authReducer from "../store/slices/authSlice";
+import attachmentReducer from "./slices/attachmentSlice";
+import authReducer from "./slices/authSlice";
 
 const combinedReducer = combineReducers({
-    downline : downlineReducer,
+    attachment : attachmentReducer,
     auth: authReducer,
 });
-
 
 export default configureStore({
   reducer: combinedReducer,

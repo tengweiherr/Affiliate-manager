@@ -5,7 +5,7 @@ import Home from './components/Home/Home';
 import Login from './components/Login/Login';
 import Auth from './components/Auth/Auth';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import Downlines from './components/Downlines/Downlines';
+import Attachments from './pages/Attachments/Attachments';
 import Information from './components/Information/Information';
 import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -54,7 +54,7 @@ const App = () => {
                             {user && 
                             <>
                                 <Nav.Link className="me-4" href="/calculator">Calculator</Nav.Link>
-                                <Nav.Link className="me-4" href="/downlines">Downlines</Nav.Link>
+                                <Nav.Link className="me-4" href="/attachments">Attachments</Nav.Link>
                                 <Nav.Link className="me-4" href="#" onClick={handleShow}>Information</Nav.Link>  
                             </>
                             }
@@ -71,7 +71,7 @@ const App = () => {
                         <Route path="/" exact component={Home}/>
                         <Route path="/login" exact component={Auth}/>
                         <Route path="/calculator" exact component={Home}/>
-                        <Route path="/downlines" exact component={Downlines}/>
+                        <Route path="/attachments" exact component={Attachments}/>
                     </>
                     :
                     <>

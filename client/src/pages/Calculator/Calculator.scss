@@ -48,37 +48,35 @@
         background-color: #f8f8f8 !important;
         border-color: #e6e6e6 !important;
         border-width: 1px;
+    }
+    td.action {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
 
-        &.commission {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-    
-            a.edit{
-                display:none;
-                cursor: pointer;
-            }
-            
-            &:hover{
-                a.edit{
-                    display:block;
-                }
-            }
+        button.edit{
+            display:block;
+            box-shadow: none !important;
+            border: none !important;
+            background-color: transparent;
         }
     }
     tr.false{
         td{
             background-color: #a0a0a0 !important;
         }
-        td.commission {            
-            &:hover{
-                a.edit{
-                    display:none;
-                }
+        td.action {            
+            button.edit{
+                display:none;
             }
         }
     }
+    td.false, th.false{
+        background-color: #a0a0a0 !important;
+    }
+
+
 
 }
 

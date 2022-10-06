@@ -25,8 +25,6 @@ export const getDownlineByReferral = async (req, res) => {
 
 export const createDownline = async (req, res) => {
 
-    console.log(req.body);
-
     const downline = req.body;
 
     const newDownline = new DownlineMessage(downline);
@@ -34,6 +32,7 @@ export const createDownline = async (req, res) => {
     try {
         await newDownline.save();
         res.status(201).json(newDownline);
+        console.log(newDownline);
     } catch (error) {
         res.status(409).json({ message: error.message })
     }
@@ -53,6 +52,8 @@ export const updateDownline = async (req, res) => {
 
     const updatedDownline = await DownlineMessage.findByIdAndUpdate(_id, { ...downline, _id }, { new: true });
 
+    console.log(updatedDownline);
+
     res.json(updatedDownline);
 }
 
@@ -60,12 +61,12 @@ export const deleteDownline = async (req, res) => {
 
     const { id } = req.params;
 
-    const downline = req.body;
-
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('No info with that id');
 
-    await DownlineMessage.findByIdAndRemove(id);
+   const deletedDownline = await DownlineMessage.findByIdAndRemove(id);
 
-    res.json( {message: 'Downline deleted successfully' });
+   console.log(deletedDownline);
+
+    res.json(deletedDownline);
 }
 

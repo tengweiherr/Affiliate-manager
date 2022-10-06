@@ -6,11 +6,10 @@ const downlineSchema = mongoose.Schema({
     referral: String,
     attachment: Number,
     join_date:{
-        type: Date,
-        default: new Date()
+        type: string,
+        default: new Date().toString()
     },
     fund: String,
-    referral_fee: Number
 });
 
 const DownlineMessage = mongoose.model('DownlineMessage', downlineSchema);

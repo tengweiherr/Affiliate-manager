@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 // import { getDownline } from '../../actions/downline'
 // import { getCycle } from '../../actions/cycle'
 import './styles.scss';
-import Calculator from '../Calculator/Calculator';
+import Calculator from '../../pages/Calculator/Calculator';
 import { useHistory } from 'react-router-dom';
 
 const Home = () => {
