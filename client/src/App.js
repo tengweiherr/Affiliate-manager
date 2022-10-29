@@ -49,6 +49,7 @@ const App = () => {
                         <Route path="calculator" element={<Calculator/>}/>
                         <Route path="attachments" element={<Attachments/>}/>
                     </Route>
+                    <Route path="*" element={<Navigate to={`/${fund}/${currentTab}`} replace/>}/>
                     </>
                     :
                     <>
