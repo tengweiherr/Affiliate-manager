@@ -5,7 +5,8 @@ import { useDispatch } from 'react-redux';
 // import { getCycle } from '../../actions/cycle'
 import './styles.scss';
 import Calculator from '../../pages/Calculator/Calculator';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 
 const Home = () => {
 
@@ -14,7 +15,8 @@ const Home = () => {
     const [currentModal, setCurrentModal] = useState(false);
     const [currentTotalReturn, setCurrentTotalReturn] = useState(0);
 
-    const history = useHistory();
+    // const history = useHistory();
+    const navigate = useNavigate();
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
 
@@ -30,12 +32,12 @@ const Home = () => {
 
     return (
         <>
-        {user ? 
+        {user && 
         <Container>
             <Calculator/>
         </Container>  
-        :
-        history.push('/login')
+        
+        // history.push('/login')
         }
 
         </>

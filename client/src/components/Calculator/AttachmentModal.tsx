@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Button, Form, Modal } from 'react-bootstrap';
-import { ArrayOfAttachments, Attachment } from "../types";
+import { ArrayOfAttachments, Attachment } from "../../types";
 
 type Props = {
     show:boolean,

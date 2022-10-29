@@ -1,34 +1,36 @@
 import { Container, FormControl, FormLabel, Form, Row, Col, Button, InputGroup, Spinner } from 'react-bootstrap';
 import React, { useState } from 'react';
 // import { login } from '../../actions/login';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import './Auth.scss';
 import * as authSlice from '../../store/slices/authSlice';
-import { login } from '../../api';
+import * as API from '../../api';
+import { LoginData } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 
 const Auth = () => {
 
     //useDispatch to set an action
     const dispatch = useDispatch();
-    const history = useHistory();
+    // const history = useHistory();
+    const navigate = useNavigate();
 
-    const [loginData, setLoginData] = useState({id: '', password: ''});
+    const [loginData, setLoginData] = useState<LoginData>({id: '', password: ''});
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const [showPassword, setShowPassword] = useState(false);
-
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleSubmit = (e) => {
+    const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
         setIsLoading(true);
         e.preventDefault(); //so that browser dont refresh
-        login(loginData)
+        API.login(loginData)
         .then(result =>{
             setIsLoading(false);
             if(result){
                 dispatch(authSlice.login(result));
-                history.push('/');
+                // history.push('/');
+                navigate("/");
             }
         })
         .catch(err=>{
@@ -38,32 +40,23 @@ const Auth = () => {
 
     }
 
-    // const handleChange = (e) => {
-    //     e.preventDefault(); //so that browser dont refresh
-    //     setLoginData({...loginData,[e.target.name]:e.target.value});
-    // }
-
-    // const handleShowPassword = () => {
-    //     setShowPassword((prevShowPassword) => !prevShowPassword)
-    // }
-
     return (
         <Container className="loginScreen">
             <Form className="authform" onSubmit={handleSubmit}>
                 <Container className="authformContainer">
                     <Row className="inputRow">
-                        <FormControl name="id" size="md" placeholder="User ID" value={loginData.id} onChange={(e) => setLoginData({...loginData,id: e.target.value})}></FormControl>
+                        <FormControl name="id" size="sm" placeholder="User ID" value={loginData.id} onChange={(e) => setLoginData({...loginData,id: e.target.value})}></FormControl>
                     </Row>
                     <Row className="inputRow">
                         <InputGroup>
-                            <FormControl name="password" size="md" placeholder="Password" type={showPassword ? "text" : "password"} value={loginData.password} onChange={(e) => setLoginData({...loginData,password: e.target.value})}></FormControl>
+                            <FormControl name="password" size="sm" placeholder="Password" type={showPassword ? "text" : "password"} value={loginData.password} onChange={(e) => setLoginData({...loginData,password: e.target.value})}></FormControl>
                             <Button onClick={()=>setShowPassword((prevShowPassword) => !prevShowPassword)}>{showPassword ? "Hide" : "Show"}</Button>
                         </InputGroup>
                     </Row>
                     <Row className="submitRow">
                         {isLoading ? <Spinner animation="border" role="status" className='m-auto'/>
                         :
-                        <Button type="submit" variant="primary" size="md" className="submit-btn">Submit</Button>
+                        <Button type="submit" variant="primary" size="sm" className="submit-btn">Submit</Button>
                         }                        
                     </Row>  
                 </Container>

@@ -3,6 +3,11 @@ export type LoginData = {
     password: string
 }
 
+export type UserIDToken = {
+    id:string,
+    token:string
+}
+
 export type AttachmentStore = {
     attachments:ArrayOfAttachments,
     loading:boolean,

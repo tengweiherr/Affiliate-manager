@@ -1,28 +1,34 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Button, Col, Dropdown, Row, Container } from 'react-bootstrap';
 import "./Attachments.scss";
 import { fetchAttachments } from '../../store/thunk/attachmentThunk';
-import { Attachment, AttachmentStore } from '../../types';
+import { Attachment } from '../../types';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
-import AttachmentsTable from '../../components/AttachmentsTable';
-import UpdateAttachmentModal from '../../components/UpdateAttachmentModal';
+import AttachmentsTable from '../../components/Attachments/AttachmentsTable';
+import UpdateAttachmentModal from '../../components/Attachments/UpdateAttachmentModal';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useParams } from 'react-router-dom';
 
 const Attachments = () => {
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
+    const { fund } = useParams();
+    
     //data
-    const attachmentStore = useSelector((state:{attachment:AttachmentStore}) => state.attachment);
+    const attachmentStore = useAppSelector((state) => state.attachment);
+    
     const [referral, setReferral] = useState<string>('');
     const [selectedAttachment, setSelectedAttachment] = useState<Attachment|undefined>();
     const totalAttachmentsAmount = useMemo(() => {
         let total:number = 0;
-        attachmentStore.attachments.forEach((item:Attachment)=>{
-          total += item.attachment;
-        })
+        if(fund){
+            attachmentStore.attachments.filter(x=>x.fund.includes(fund)).forEach((item:Attachment)=>{
+                total += item.attachment;
+              })
+        }
         return total;        
-    }, [attachmentStore])
+    }, [attachmentStore.attachments, fund])
 
     //modal
     const [show, setShow] = useState<boolean>(false);
@@ -86,12 +92,15 @@ const Attachments = () => {
                     <Button onClick={()=>setAction("Add")} className="add-btn">Add</Button>
                 </Col>
             </Row>
+            {fund && 
             <AttachmentsTable 
-                attachmentStore={attachmentStore}
+                attachmentsByFund={attachmentStore.attachments.filter(x=>x.fund.includes(fund))}
                 setSelectedAttachment={setSelectedAttachment}
                 setAction={setAction}
                 referral={referral}
-            />
+            />            
+            }
+
 
             <UpdateAttachmentModal 
                 show={show}

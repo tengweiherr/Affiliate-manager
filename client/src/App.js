@@ -2,21 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Navbar, Nav, Modal, Button } from 'react-bootstrap';
 import './styles.scss';
 import Home from './components/Home/Home';
-import Login from './components/Login/Login';
+import Login from './components/LoginButton/LoginButton';
 import Auth from './components/Auth/Auth';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom"
 import Attachments from './pages/Attachments/Attachments';
 import Information from './components/Information/Information';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import NavBar from './components/Header/Navbar';
+import Calculator from './pages/Calculator/Calculator';
 
 const App = () => {
 
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    const user = useSelector(state => state.auth)
+    const user = useSelector(state => state.auth);
+    const [fund, setFund] = useState("GMC")
+    const [currentTab, setCurrentTab] = useState("calculator")
 
     const parseJwt = (token) => {
         try {
@@ -27,10 +27,8 @@ const App = () => {
       };
 
     return (
-        <BrowserRouter>
-        {user &&
         <>
-            {parseJwt(user.token).exp * 1000 < Date.now() && 
+            {(user && parseJwt(user.token).exp * 1000 < Date.now()) && 
                 <Modal show={true}>
                 <Modal.Header>
                 <Modal.Title>Login expired</Modal.Title>
@@ -39,70 +37,34 @@ const App = () => {
                     <Login/>
                 </Modal.Body>
                 </Modal>
-            }    
-        </>    
-        }
-          <Navbar collapseOnSelect expand="lg" variant="light" bg="light">
-            <Container>
-                <Row className='justify-content-between w-100' >
-                    <Col className='d-flex align-items-center'>
-                        <Navbar.Brand href="#">TFXI Calculator</Navbar.Brand>
-                    </Col>
-                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                    <Col sm={3}>
-                        <Navbar.Collapse className="me-auto justify-content-end">
-                            {user && 
-                            <>
-                                <Nav.Link className="me-4" href="/calculator">Calculator</Nav.Link>
-                                <Nav.Link className="me-4" href="/attachments">Attachments</Nav.Link>
-                                <Nav.Link className="me-4" href="#" onClick={handleShow}>Information</Nav.Link>  
-                            </>
-                            }
-                            <Login/>
-                        </Navbar.Collapse>
-                    </Col>
-                </Row>
-            </Container>
-          </Navbar>
+            }            
+          <NavBar user={user} fund={fund} setFund={setFund} currentTab={currentTab} setCurrentTab={setCurrentTab}/>
           <Container fluid className='p-4'>
-                <Switch>
+                <Routes>
                     {user ? 
                     <>
-                        <Route path="/" exact component={Home}/>
-                        <Route path="/login" exact component={Auth}/>
-                        <Route path="/calculator" exact component={Home}/>
-                        <Route path="/attachments" exact component={Attachments}/>
+                    <Route path="/" element={<Navigate to={`${fund}/${currentTab}`} replace/>}/>
+                    <Route path="login" element={<Auth/>}/>
+                    <Route path=":fund" element={<Navigate to={`/${fund}/${currentTab}`} replace/>}/>
+                    <Route path=":fund">
+                        <Route path="calculator" element={<Calculator/>}/>
+                        <Route path="attachments" element={<Attachments/>}/>
+                    </Route>
                     </>
                     :
                     <>
                         <Route
-                            exact
                             path="*"
-                            render={() => (
-                                <Redirect to="/login" /> 
-                            )}
+                            element={<Navigate to="/login" replace/>}
                         />
-                        <Route path="/login" exact component={Auth}/>
+                        <Route path="/login" element={<Auth/>}/>
                     </>                    
                     }
 
-                </Switch>
+                </Routes>
           </Container>
-          <Modal show={show} onHide={handleClose}>
-            <Modal.Header>
-            <Modal.Title>Information</Modal.Title>
-            </Modal.Header>
-            <Modal.Body className='p-4'>
-                <Information />
-            </Modal.Body>
-            <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-                Close
-            </Button>
-                </Modal.Footer>
-            </Modal>
 
-        </BrowserRouter>
+        </>
 
     );
 }

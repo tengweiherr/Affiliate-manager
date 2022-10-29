@@ -6,7 +6,7 @@ const downlineSchema = mongoose.Schema({
     referral: String,
     attachment: Number,
     join_date:{
-        type: string,
+        type: Date,
         default: new Date().toString()
     },
     fund: String,

@@ -1,21 +1,23 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Table } from "react-bootstrap";
-import { AttachmentStore, Attachment, ArrayOfAttachments } from "../types";
+import { useParams } from "react-router-dom";
+import { AttachmentStore, Attachment, ArrayOfAttachments } from "../../types";
 
 type Props = {
-    attachmentStore: AttachmentStore,
+    // attachmentStore: AttachmentStore,
+    attachmentsByFund:ArrayOfAttachments,
     setSelectedAttachment:Dispatch<SetStateAction<Attachment|undefined>>,
     setAction:Dispatch<SetStateAction<string>>,
     referral:string
 }
 
-const AttachmentsTable = ({attachmentStore,setSelectedAttachment,setAction,referral}:Props) => {
+const AttachmentsTable = ({attachmentsByFund,setSelectedAttachment,setAction,referral}:Props) => {
 
     const [filteredAttachments, setFilteredAttachments] = useState<ArrayOfAttachments>([]);
     
     useEffect(() => {
-        referral==="" ? setFilteredAttachments(attachmentStore.attachments) : setFilteredAttachments(attachmentStore.attachments.filter((attachment) => attachment?.referral === referral));
-    }, [attachmentStore.attachments, referral])  
+        referral==="" ? setFilteredAttachments(attachmentsByFund) : setFilteredAttachments(attachmentsByFund.filter((attachment) => attachment?.referral === referral));
+    }, [attachmentsByFund, referral])  
 
     return (
         <Table hover responsive="md" className="rounded-lg" data-testid="attachmentsTable">

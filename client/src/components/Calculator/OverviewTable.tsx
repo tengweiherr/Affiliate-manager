@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Col, Container, Dropdown, Form, InputGroup, Modal, Row, Spinner, Table } from 'react-bootstrap';
-import { CalculatorResult } from "../types";
+import { CalculatorResult } from "../../types";
 
 type Props = {
     result:CalculatorResult,

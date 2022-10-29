@@ -18,7 +18,7 @@ export const login = async (req, res) => {
 
         const token = jwt.sign({ id: existingUser.id}, 'test', { expiresIn: "4h" });
 
-        res.status(200).json({ result: existingUser, token });
+        res.status(200).json({ id: existingUser.id, token });
 
     } catch (error) {
         res.status(500).json({ message: "Something went wrong." });

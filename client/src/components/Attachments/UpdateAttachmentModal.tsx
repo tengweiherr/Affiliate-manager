@@ -1,9 +1,9 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import DateTimePicker from "react-datetime-picker";
-import { Attachment, CreateAttachment } from "../types";
+import { Attachment, CreateAttachment } from "../../types";
 import { useDispatch } from "react-redux";
-import { createAttachment, deleteAttachment, updateAttachment } from "../store/thunk/attachmentThunk";
+import { createAttachment, deleteAttachment, updateAttachment } from "../../store/thunk/attachmentThunk";
 import { AsyncThunkAction } from "@reduxjs/toolkit";
 
 type Props = {

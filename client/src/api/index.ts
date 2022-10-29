@@ -29,18 +29,14 @@ const API_URL = process.env.REACT_APP_API_URL;
 
 const login = async (loginData:LoginData) => {
 
-  const res = await fetch(API_URL + 'user/login/', {
+  const data = await fetch(API_URL + 'user/login/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(loginData),
   });
-  const jsonRes = await res.json();
-  if (res.status === 200)
-    return jsonRes;
-  else
-    alert(jsonRes.message);
+  return await data.json();
 }
 
 const fetchAttachments = async (referral:string,signal:AbortSignal) => {

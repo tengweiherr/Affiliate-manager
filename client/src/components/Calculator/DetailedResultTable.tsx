@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Form, Table } from 'react-bootstrap';
-import { ArrayOfAttachments, Attachment } from "../types";
+import { ArrayOfAttachments, Attachment } from "../../types";
 import AttachmentModal from "./AttachmentModal";
 
 type Props = {

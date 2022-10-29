@@ -1,24 +1,28 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { Col, Container, Dropdown, Row, Spinner } from 'react-bootstrap';
+import { Col, Container, Dropdown, Row } from 'react-bootstrap';
 import './Calculator.scss';
-import { ArrayOfAttachments, AttachmentStore } from "../../types";
-import OverviewTable from "../../components/OverviewTable";
-import CycleProfitForm from "../../components/CycleProfitForm";
-import DetailedResultTable from "../../components/DetailedResultTable";
+import { ArrayOfAttachments, Attachment } from "../../types";
+import OverviewTable from "../../components/Calculator/OverviewTable";
+import CycleProfitForm from "../../components/Calculator/CycleProfitForm";
+import DetailedResultTable from "../../components/Calculator/DetailedResultTable";
 import { fetchAttachments } from "../../store/thunk/attachmentThunk";
 import { calculatePersonalCommission, calculateSharedAccProfit } from "../../math";
 import Loading from "../../components/Loading";
 import Error from "../../components/Error";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useParams } from "react-router-dom";
 
 export const Calculator = () => {
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
+    const { fund } = useParams();
     //data
-    const attachmentStore = useSelector((state:{attachment:AttachmentStore}) => state.attachment);
-    const [filteredAttachments, setFilteredAttachments] = useState<ArrayOfAttachments>([]);
+    const attachmentStore = useAppSelector((state) => state.attachment);    
     const [all, setAll] = useState<ArrayOfAttachments>([]);
     const [referral, setReferral] = useState<string>('');
+    const filteredAttachments = useMemo(() => 
+         referral==="" ? all : all.filter((attachment) => attachment?.referral === referral)
+    , [referral,all])
 
     //customizable
     const [decimal, setDecimal] = useState<number>(2);
@@ -30,9 +34,25 @@ export const Calculator = () => {
     //calculation
     const [cycleProfit, setCycleProfit] = useState<number>(0);
     const [isCalculated, setIsCalculated] = useState<boolean>(false);
+
+    const profitSharing = useMemo(() => {
+        if(fund!=="Takami") return 0
+        let total:number = 0;
+        attachmentStore.attachments.filter(x=>x.fund.includes(fund)).forEach((item:Attachment)=>{
+            total += item.attachment;
+        })
+        if(total >= 1500000) return 20
+        else if(total >= 500000 && total < 1500000) return 16
+        else if(total >= 150000 && total < 500000) return 12
+        else if(total >= 40000 && total < 150000) return 8
+        else if(total >= 5000 && total < 40000) return 4
+        else return 0     
+    }, [attachmentStore.attachments, fund])
+
     const commission = useMemo<number>(() => {
         return cycleProfit*3/6*(payout/100);        
     }, [cycleProfit,payout])
+
     const result = useMemo(() => {        
         return {
             main_acc_profit: cycleProfit*3,
@@ -51,12 +71,30 @@ export const Calculator = () => {
     },[dispatch])
 
     useEffect(() => {
-        attachmentStore.attachments.length !==0 && setAll(attachmentStore.attachments);
-    }, [attachmentStore.attachments])
-    
+        if(fund)
+        attachmentStore.attachments.length !==0 && setAll(attachmentStore.attachments.filter(x=>x.fund.includes(fund)));
+    }, [attachmentStore.attachments,fund])
+
     useEffect(() => {
-        referral==="" ? setFilteredAttachments(all) : setFilteredAttachments(all.filter((attachment) => attachment?.referral === referral));
-    }, [referral,all])  
+        let total:number = 0;
+        if(fund){
+            attachmentStore.attachments.filter(x=>x.fund.includes(fund)).forEach((item:Attachment)=>{
+                total += item.attachment;
+            })
+        }
+        switch (fund) {
+            case "GMC":
+                if(total >= 40000) setPayout(40)
+                else if(total >= 25000 && total < 40000) setPayout(30)
+                else if(total >= 10000 && total < 25000) setPayout(20)
+                else if(total >= 5000 && total < 10000) setPayout(10)                
+                break;
+            default:
+                break;
+        }
+
+        // return total;        
+    }, [attachmentStore.attachments, fund])
     
     const onSubmitCycleProfit = () => {
         cycleProfit !== 0 && setIsCalculated(true);

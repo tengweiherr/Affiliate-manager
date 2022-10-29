@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
 
 type Props = {
     rate:number,
@@ -48,14 +49,16 @@ const CycleProfitForm = ({rate,payout,includeCommission,includeMonthlyReferralRe
 
     const [error, setError] = useState<string>("");
     const [currency, setCurrency] = useState<string>("usd");
+    const { fund } = useParams();
 
   return (
     <Form>
         <Row>
             <Col className="d-flex flex-column justify-content-between cycle-profit-upper">
                 <Form.Group className="d-flex flex-column cycle-profit-upper-inner justify-content-between" controlId="calculatorForm.profit">
+                    {fund==="Takami" && <span style={{color:"red"}}>Takami's not ready yet.</span>}   
                     <Form.Label>
-                        <h5>Cycle Profit</h5>                       
+                        <h5>{fund} Cycle Profit</h5>             
                     </Form.Label>
                     <div style={{display:"flex", flexDirection:"row",alignItems:"center"}}>
                     <Form.Control type="number" min="0" step="0.01" placeholder="Cycle Profit" data-testid="cycleProfitInput" style={{width:150, marginRight:8}} 
@@ -77,6 +80,7 @@ const CycleProfitForm = ({rate,payout,includeCommission,includeMonthlyReferralRe
                         onChange={()=>setIncludeCommission((prev)=>!prev)}
                         data-testid="includeCommission"
                     />   
+                    {fund!=="Takami" && 
                     <Form.Check
                         inline
                         label="Include referral reward"
@@ -87,8 +91,10 @@ const CycleProfitForm = ({rate,payout,includeCommission,includeMonthlyReferralRe
                         onChange={()=>setIncludeMonthlyReferralReward((prev)=>!prev)}
                         data-testid="includeCommission"
                     />   
+                    }
+
                 </Form.Group>
-                <Button variant="primary" data-testid="calculateBtn" className="submit-btn rounded mb-3" disabled={error!==""} onClick={()=>onSubmitCycleProfit()}>
+                <Button variant="primary" data-testid="calculateBtn" className="submit-btn rounded mb-3" disabled={error!==""||fund==="Takami"} onClick={()=>onSubmitCycleProfit()}>
                     Calculate
                 </Button>
 
@@ -162,6 +168,7 @@ const CycleProfitForm = ({rate,payout,includeCommission,includeMonthlyReferralRe
 
                     </div>   
                 </Form.Group>
+                {fund !== "Takami" && 
                 <Form.Group className="mb-3" controlId="commission">
                     <Form.Label className="mb-0">
                         <h6>Commission Payout in %</h6>
@@ -174,6 +181,8 @@ const CycleProfitForm = ({rate,payout,includeCommission,includeMonthlyReferralRe
                         <p>%</p>
                     </InputGroup>
                 </Form.Group>
+                }
+
             </Col>
         </Row>                
     </Form>     
