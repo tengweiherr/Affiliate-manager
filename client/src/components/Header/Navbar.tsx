@@ -47,7 +47,7 @@ const NavBar = ({user,fund,setFund,currentTab,setCurrentTab}:Props) => {
                             <Nav.Link className="me-4" onClick={()=>onCurrentTabSelect("calculator",fund)}>Calculator</Nav.Link>
                             <Nav.Link className="me-4" onClick={()=>onCurrentTabSelect("attachments",fund)}>Attachments</Nav.Link>
                             <Nav.Link className="me-4" onClick={()=>setShow(true)}>Information</Nav.Link>  
-                            <NavDropdown className="me-4" title={fund} id="fund-dropdown" onSelect={onNavDropdownSelect}>
+                            <NavDropdown className="me-4 px-2 py-1 rounded" style={{background:"lightgrey"}} title={fund} id="fund-dropdown" onSelect={onNavDropdownSelect}>
                                 <NavDropdown.Item eventKey="GMC">
                                     GMC
                                 </NavDropdown.Item>
