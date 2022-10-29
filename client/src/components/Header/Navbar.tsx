@@ -37,7 +37,7 @@ const NavBar = ({user,fund,setFund,currentTab,setCurrentTab}:Props) => {
         <Container>
             <Row className='justify-content-between w-100' >
                 <Col className='d-flex align-items-center'>
-                    <Navbar.Brand>TFXI Referral Management</Navbar.Brand>
+                    <Navbar.Brand>TFXI Referral Manager</Navbar.Brand>
                 </Col>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Col sm={3}>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Navbar, Nav, Modal, Button } from 'react-bootstrap';
 import './styles.scss';
-import Home from './components/Home/Home';
 import Login from './components/LoginButton/LoginButton';
 import Auth from './components/Auth/Auth';
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom"
