@@ -1,0 +1,13 @@
+.navlink{
+    color:#1b4971 !important;
+    &:hover{
+        border-bottom: 3px solid lightgray;
+    }
+}
+
+.navlinkActive{
+    border-bottom: 3px solid;
+    &:hover{
+        border-bottom: 3px solid;
+    }
+}

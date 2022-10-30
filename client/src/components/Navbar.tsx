@@ -1,11 +1,12 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Container, Row, Col, Navbar, Nav, Modal, Button, NavDropdown } from 'react-bootstrap';
-import Login from "./LoginButton/LoginButton";
+import Login from "./LoginButton";
 import Information from "./Information";
 import { UserIDToken } from "../types";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
+import styles from "./Navbar.module.scss";
 
 type Props = {
     user:UserIDToken|null,
@@ -40,10 +41,10 @@ const NavBar = ({user,fund,setFund,currentTab,setCurrentTab}:Props) => {
                     <Navbar.Collapse className="me-auto justify-content-end">
                         {user && 
                         <>
-                            <NavLink to="calculator" className="me-4 nav-link" onClick={()=>setCurrentTab("calculator")}>Calculator</NavLink>
-                            <NavLink to="attachments" className="me-4 nav-link" onClick={()=>setCurrentTab("attachments")}>Attachments</NavLink>
-                            <Nav.Link className="me-4" onClick={()=>setShow(true)}>Information</Nav.Link>  
-                            <NavDropdown className="me-4 px-2 py-1 rounded" style={{background:"lightgrey"}} title={fund} id="fund-dropdown" onSelect={onNavDropdownSelect}>
+                            <NavLink to="calculator" className={`me-4 nav-link ${currentTab==="calculator" && styles.navlinkActive} ${styles.navlink}`} onClick={()=>setCurrentTab("calculator")}>Calculator</NavLink>
+                            <NavLink to="attachments" className={`me-4 nav-link ${currentTab==="attachments" && styles.navlinkActive} ${styles.navlink}`} onClick={()=>setCurrentTab("attachments")}>Attachments</NavLink>
+                            <Nav.Link className={`me-4 ${styles.navlink}`} onClick={()=>setShow(true)}>Information</Nav.Link>  
+                            <NavDropdown className="me-4 px-3 py-1 rounded" style={{background:"lightgrey"}} title={fund} id="fund-dropdown" onSelect={onNavDropdownSelect}>
                                 <NavDropdown.Item eventKey="GMC">
                                     GMC
                                 </NavDropdown.Item>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row } from 'react-bootstrap';
+import { Button, Container, Row } from 'react-bootstrap';
 
 const Information = () => {
 
@@ -13,6 +13,34 @@ const Information = () => {
                     <li>卖的人的downline</li>
                     <li>其他人的downline</li>
                 </ol>
+            </Row>
+            <Row><h5>Bank Account</h5></Row>
+            <Row className='mb-4'>
+            <p>
+                <strong>LIAN TAT XIAN</strong><br/>
+                151061595628<br/>
+                MAYBANK<br/>
+            </p>
+            <p>
+                <strong>KHOO JIAN HUI</strong><br/>
+                151061687923<br/>
+                MAYBANK<br/>
+            </p>
+            <p>
+                <strong>TENG WEI HERR</strong><br/>
+                151061745045<br/>
+                MAYBANK<br/>
+            </p>
+            <p>
+                <strong>CHAI ZEN FEI</strong><br/>
+                1491000738<br/>
+                UOB BANK<br/>
+            </p>
+            <p>
+                <strong>OH WEI SHUN</strong><br/>
+                6393951029<br/>
+                PUBLIC BANK<br/>
+            </p>
             </Row>
             <Row><h5>GMC Marketing Plan</h5></Row>
             <Row className='mb-4'>
@@ -43,34 +71,6 @@ const Information = () => {
                 5 EM = 3% (self invest USD5000)<br/>
                 10 EM = 4% (self invest USD5000)<br/>
                 Total 7% Payout.<br/>
-            </p>
-            </Row>
-            <Row><h5>Bank Account</h5></Row>
-            <Row>
-            <p>
-                <strong>LIAN TAT XIAN</strong><br/>
-                151061595628<br/>
-                MAYBANK<br/>
-            </p>
-            <p>
-                <strong>KHOO JIAN HUI</strong><br/>
-                151061687923<br/>
-                MAYBANK<br/>
-            </p>
-            <p>
-                <strong>TENG WEI HERR</strong><br/>
-                151061745045<br/>
-                MAYBANK<br/>
-            </p>
-            <p>
-                <strong>CHAI ZEN FEI</strong><br/>
-                1491000738<br/>
-                UOB BANK<br/>
-            </p>
-            <p>
-                <strong>OH WEI SHUN</strong><br/>
-                6393951029<br/>
-                PUBLIC BANK<br/>
             </p>
             </Row>
         </Container>
