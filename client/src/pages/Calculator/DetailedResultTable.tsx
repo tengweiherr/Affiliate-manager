@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Form, Table } from 'react-bootstrap';
+import { useParams } from "react-router-dom";
 import { ArrayOfAttachments, Attachment } from "../../types";
 import AttachmentModal from "./AttachmentModal";
 
@@ -43,6 +44,8 @@ const DetailedResultTable = ({filteredAttachments,all,setAll,rate,decimal,commis
     //modal
     const [editingAttachment, setEditingAttachment] = useState<Attachment|undefined>();
 
+    const { fund } = useParams();
+
   return(
     <Table hover responsive="md" className="detail" data-testid="attachmentsTable">
     <thead>
@@ -62,9 +65,11 @@ const DetailedResultTable = ({filteredAttachments,all,setAll,rate,decimal,commis
             <th className={`commission ${includeCommission}`}>
                 Commission
             </th>
+            {fund !== "Takami" && 
             <th className={`referralReward ${includeMonthlyReferralReward}`}>
                 Referral Reward
             </th>
+            }
             <th className="referral">
                 Referral
             </th>
@@ -95,9 +100,11 @@ const DetailedResultTable = ({filteredAttachments,all,setAll,rate,decimal,commis
                 <td className={`commission ${includeCommission}`}>
                     {attachment.commission? attachment.commission.toFixed(decimal) : ((commission*attachment.attachment/1000)*rate).toFixed(decimal)}                 
                 </td>
+                {fund !== "Takami" && 
                 <td className={`monthlyReferralReward ${includeMonthlyReferralReward}`}>
                     {attachment.monthly_referral_reward.toFixed(decimal)}
                 </td>
+                }
                 <td className='referral'>
                     {attachment.referral.charAt(0).toUpperCase() + attachment.referral.slice(1)}
                 </td>

@@ -5,8 +5,8 @@ import { fetchAttachments } from '../../store/thunk/attachmentThunk';
 import { Attachment } from '../../types';
 import Loading from '../../components/Loading';
 import Error from '../../components/Error';
-import AttachmentsTable from '../../components/Attachments/AttachmentsTable';
-import UpdateAttachmentModal from '../../components/Attachments/UpdateAttachmentModal';
+import AttachmentsTable from './AttachmentsTable';
+import UpdateAttachmentModal from './UpdateAttachmentModal';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { useParams } from 'react-router-dom';
 
@@ -66,7 +66,7 @@ const Attachments = () => {
             {(!attachmentStore.loading && attachmentStore.error==="") && 
             <>
             <Row className="mb-2">
-                <Col md={9} xs={4}>
+                <Col md={6} xs={4}>
                     <Dropdown>
                         <Dropdown.Toggle variant="success" id="dropdown-basic">
                             {referral === '' ? "All" : referral.charAt(0).toUpperCase() + referral.slice(1)}
@@ -85,9 +85,15 @@ const Attachments = () => {
                     </Dropdown>
                 </Col>
                 
-                <Col md={3} xs={8} className="d-flex justify-content-end">
+                <Col md={6} xs={8} className="d-flex justify-content-end">
+                    {fund==="GMC" && 
+                        <p className='m-auto total_payout'>Main acc: USD 3000</p>
+                    }
+                    {fund==="Takami" && 
+                        <p className='m-auto total_payout'>Main acc: USD 1000</p>
+                    }
                     {attachmentStore.attachments && 
-                        <p data-testid="totalUSD" className='m-auto total_payout'>Total: USD {totalAttachmentsAmount}</p>
+                        <p data-testid="totalUSD" className='m-auto total_payout'>Total downline: USD {totalAttachmentsAmount}</p>
                     }
                     <Button onClick={()=>setAction("Add")} className="add-btn">Add</Button>
                 </Col>

@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Navbar, Nav, Modal, Button } from 'react-bootstrap';
 import './styles.scss';
 import Login from './components/LoginButton/LoginButton';
-import Auth from './components/Auth/Auth';
+import Auth from './pages/Auth/Auth';
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from "react-router-dom"
 import Attachments from './pages/Attachments/Attachments';
-import Information from './components/Information/Information';
+import Information from './components/Information';
 // import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import NavBar from './components/Header/Navbar';
+import NavBar from './components/Navbar';
 import Calculator from './pages/Calculator/Calculator';
 
 const App = () => {
@@ -17,6 +17,8 @@ const App = () => {
     const [fund, setFund] = useState("GMC")
     const [currentTab, setCurrentTab] = useState("calculator")
 
+    const params = useParams();
+
     const parseJwt = (token) => {
         try {
           return JSON.parse(atob(token.split(".")[1]));
@@ -24,7 +26,7 @@ const App = () => {
           return null;
         }
       };
-
+    
     return (
         <>
             {(user && parseJwt(user.token).exp * 1000 < Date.now()) && 

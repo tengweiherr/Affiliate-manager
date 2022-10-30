@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Button, Form, Modal } from 'react-bootstrap';
+import { useParams } from "react-router-dom";
 import { ArrayOfAttachments, Attachment } from "../../types";
 
 type Props = {
@@ -41,6 +42,8 @@ const handleModalSubmit = (editingAttachment:Attachment|undefined, setAll:Dispat
 
 const AttachmentModal = ({show,setShow,editingAttachment,setEditingAttachment,decimal,commission,rate,all,setAll}:Props) => {
 
+    const {fund} = useParams();
+
   return (
     <Modal show={show} onHide={()=>setShow(false)}>
         <Modal.Header>
@@ -74,6 +77,7 @@ const AttachmentModal = ({show,setShow,editingAttachment,setEditingAttachment,de
                     value={editingAttachment?.commission? editingAttachment.commission.toFixed(decimal) : ((commission*(editingAttachment?.attachment ? editingAttachment?.attachment : 0)/1000)*rate).toFixed(decimal)}
                     onChange={(e:any)=>commissionChangeEvent(e,decimal,editingAttachment,setEditingAttachment)}/>
                 </Form.Group>
+                {fund!=="Takami"&&
                 <Form.Group className="mb-3" controlId="referral_reward">
                     <Form.Label>New Monthly Referral Reward</Form.Label>
                     <Form.Control type="number" min={0} step={10} placeholder="New Monthly Referral Reward"
@@ -81,6 +85,7 @@ const AttachmentModal = ({show,setShow,editingAttachment,setEditingAttachment,de
                     onChange={(e:any)=>referralRewardChangeEvent(e,decimal,editingAttachment,setEditingAttachment)}
                     />
                 </Form.Group>
+                }
                 {/* <Form.Group className="mb-3" controlId="fund">
                     <Form.Label>Fund Invested</Form.Label>
                     <Form.Control type="text" placeholder="Fund" name="Fund" value={editingAttachment?.fund} readOnly disabled/>      

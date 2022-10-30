@@ -2,9 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Col, Container, Dropdown, Row } from 'react-bootstrap';
 import './Calculator.scss';
 import { ArrayOfAttachments, Attachment } from "../../types";
-import OverviewTable from "../../components/Calculator/OverviewTable";
-import CycleProfitForm from "../../components/Calculator/CycleProfitForm";
-import DetailedResultTable from "../../components/Calculator/DetailedResultTable";
+import OverviewTable from "./OverviewTable";
+import CycleProfitForm from "./CycleProfitForm";
+import DetailedResultTable from "./DetailedResultTable";
 import { fetchAttachments } from "../../store/thunk/attachmentThunk";
 import { calculatePersonalCommission, calculateSharedAccProfit } from "../../math";
 import Loading from "../../components/Loading";
@@ -27,7 +27,7 @@ export const Calculator = () => {
     //customizable
     const [decimal, setDecimal] = useState<number>(2);
     const [rate, setRate] = useState<number>(1);
-    const [payout, setPayout] = useState<number>(40);
+    const [rebate, setRebate] = useState<number>(0);
     const [includeCommission, setIncludeCommission] = useState<boolean>(true);
     const [includeMonthlyReferralReward, setIncludeMonthlyReferralReward] = useState<boolean>(true);
 
@@ -35,9 +35,22 @@ export const Calculator = () => {
     const [cycleProfit, setCycleProfit] = useState<number>(0);
     const [isCalculated, setIsCalculated] = useState<boolean>(false);
 
+    const payout = useMemo(() => {
+        if(fund!=="GMC") return 0
+        let total:number = 0;
+        attachmentStore.attachments.filter(x=>x.fund.includes(fund)).forEach((item:Attachment)=>{
+            total += item.attachment;
+        })
+        if(total >= 40000) return 40
+        else if(total >= 25000 && total < 40000) return 30
+        else if(total >= 10000 && total < 25000) return 20
+        else if(total >= 5000 && total < 10000) return 10                
+        else return 0
+    }, [attachmentStore.attachments, fund])
+
     const profitSharing = useMemo(() => {
         if(fund!=="Takami") return 0
-        let total:number = 0;
+        let total:number = 1000; //include self attachment
         attachmentStore.attachments.filter(x=>x.fund.includes(fund)).forEach((item:Attachment)=>{
             total += item.attachment;
         })
@@ -50,21 +63,54 @@ export const Calculator = () => {
     }, [attachmentStore.attachments, fund])
 
     const commission = useMemo<number>(() => {
-        return cycleProfit*3/6*(payout/100);        
-    }, [cycleProfit,payout])
+        switch (fund) {
+            case "GMC":
+                return cycleProfit*3/6*(payout/100)
+            case "Takami":
+                return cycleProfit*profitSharing/65
+            default:
+                return 0
+        }              
+    }, [cycleProfit, fund, payout, profitSharing])
 
-    const result = useMemo(() => {        
-        return {
-            main_acc_profit: cycleProfit*3,
-            shared_acc_profit: calculateSharedAccProfit(all,cycleProfit),
-            shared_acc_commission: calculatePersonalCommission(all,"self",commission,includeCommission,includeMonthlyReferralReward),
-            dawson_commission: calculatePersonalCommission(all,"dawson",commission,includeCommission,includeMonthlyReferralReward),
-            khoo_commission: calculatePersonalCommission(all,"khoo",commission,includeCommission,includeMonthlyReferralReward),
-            weiherr_commission: calculatePersonalCommission(all,"weiherr",commission,includeCommission,includeMonthlyReferralReward),
-            xiaofei_commission: calculatePersonalCommission(all,"xiaofei",commission,includeCommission,includeMonthlyReferralReward),
-            jasper_commission: calculatePersonalCommission(all,"jasper",commission,includeCommission,includeMonthlyReferralReward),
-        }
-    }, [all, commission, cycleProfit, includeCommission, includeMonthlyReferralReward])
+    const result = useMemo(() => {    
+        switch (fund) {
+            case "GMC":
+                return {
+                    main_acc_profit: cycleProfit*3,
+                    shared_acc_profit: calculateSharedAccProfit(all,cycleProfit),
+                    shared_acc_commission: calculatePersonalCommission(all,"self",commission,includeCommission,includeMonthlyReferralReward),
+                    dawson_commission: calculatePersonalCommission(all,"dawson",commission,includeCommission,includeMonthlyReferralReward),
+                    khoo_commission: calculatePersonalCommission(all,"khoo",commission,includeCommission,includeMonthlyReferralReward),
+                    weiherr_commission: calculatePersonalCommission(all,"weiherr",commission,includeCommission,includeMonthlyReferralReward),
+                    xiaofei_commission: calculatePersonalCommission(all,"xiaofei",commission,includeCommission,includeMonthlyReferralReward),
+                    jasper_commission: calculatePersonalCommission(all,"jasper",commission,includeCommission,includeMonthlyReferralReward),
+                }   
+            case "Takami":
+                return {
+                    main_acc_profit: cycleProfit+rebate,
+                    shared_acc_profit: calculateSharedAccProfit(all,cycleProfit),
+                    shared_acc_commission: calculatePersonalCommission(all,"self",commission,includeCommission,false),
+                    dawson_commission: calculatePersonalCommission(all,"dawson",commission,includeCommission,false),
+                    khoo_commission: calculatePersonalCommission(all,"khoo",commission,includeCommission,false),
+                    weiherr_commission: calculatePersonalCommission(all,"weiherr",commission,includeCommission,false),
+                    xiaofei_commission: calculatePersonalCommission(all,"xiaofei",commission,includeCommission,false),
+                    jasper_commission: calculatePersonalCommission(all,"jasper",commission,includeCommission,false),
+                }                       
+            default:
+                return {
+                    main_acc_profit: cycleProfit,
+                    shared_acc_profit: 0,
+                    shared_acc_commission: 0,
+                    dawson_commission: 0,
+                    khoo_commission: 0,
+                    weiherr_commission: 0,
+                    xiaofei_commission: 0,
+                    jasper_commission: 0,
+                }
+        }    
+
+    }, [all, commission, cycleProfit, fund, includeCommission, includeMonthlyReferralReward, rebate])
 
     useEffect(() => {
         dispatch(fetchAttachments(""));
@@ -74,27 +120,6 @@ export const Calculator = () => {
         if(fund)
         attachmentStore.attachments.length !==0 && setAll(attachmentStore.attachments.filter(x=>x.fund.includes(fund)));
     }, [attachmentStore.attachments,fund])
-
-    useEffect(() => {
-        let total:number = 0;
-        if(fund){
-            attachmentStore.attachments.filter(x=>x.fund.includes(fund)).forEach((item:Attachment)=>{
-                total += item.attachment;
-            })
-        }
-        switch (fund) {
-            case "GMC":
-                if(total >= 40000) setPayout(40)
-                else if(total >= 25000 && total < 40000) setPayout(30)
-                else if(total >= 10000 && total < 25000) setPayout(20)
-                else if(total >= 5000 && total < 10000) setPayout(10)                
-                break;
-            default:
-                break;
-        }
-
-        // return total;        
-    }, [attachmentStore.attachments, fund])
     
     const onSubmitCycleProfit = () => {
         cycleProfit !== 0 && setIsCalculated(true);
@@ -113,13 +138,15 @@ export const Calculator = () => {
             <CycleProfitForm 
                 rate={rate}
                 payout={payout}
+                profitSharing={profitSharing}
+                rebate={rebate}
+                setRebate={setRebate}
                 includeCommission={includeCommission}
                 includeMonthlyReferralReward={includeMonthlyReferralReward}
                 setIncludeCommission={setIncludeCommission}
                 setIncludeMonthlyReferralReward={setIncludeMonthlyReferralReward}
                 setDecimal={setDecimal}
                 setRate={setRate}
-                setPayout={setPayout}
                 setCycleProfit={setCycleProfit}
                 onSubmitCycleProfit={onSubmitCycleProfit}/>  
             }    

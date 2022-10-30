@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Container, Row, Col, Navbar, Nav, Modal, Button, NavDropdown } from 'react-bootstrap';
-import Login from "../LoginButton/LoginButton";
-import Information from "../Information/Information";
-import { UserIDToken } from "../../types";
+import Login from "./LoginButton/LoginButton";
+import Information from "./Information";
+import { UserIDToken } from "../types";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 

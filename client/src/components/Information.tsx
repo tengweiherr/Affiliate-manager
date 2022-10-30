@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Container, Row } from 'react-bootstrap';
+import React from 'react';
+import { Container, Row } from 'react-bootstrap';
 
 const Information = () => {
 
