@@ -5,6 +5,7 @@ import Information from "./Information";
 import { UserIDToken } from "../types";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 type Props = {
     user:UserIDToken|null,
@@ -26,11 +27,6 @@ const NavBar = ({user,fund,setFund,currentTab,setCurrentTab}:Props) => {
         }
       }
 
-    const onCurrentTabSelect = (tab:string,fund:string) => {
-      setCurrentTab(tab);
-      navigate(`${fund}/${tab}`)
-    }
-
   return(
     <>
     <Navbar collapseOnSelect expand="lg" variant="light" bg="light">
@@ -44,8 +40,8 @@ const NavBar = ({user,fund,setFund,currentTab,setCurrentTab}:Props) => {
                     <Navbar.Collapse className="me-auto justify-content-end">
                         {user && 
                         <>
-                            <Nav.Link className="me-4" onClick={()=>onCurrentTabSelect("calculator",fund)}>Calculator</Nav.Link>
-                            <Nav.Link className="me-4" onClick={()=>onCurrentTabSelect("attachments",fund)}>Attachments</Nav.Link>
+                            <NavLink to="calculator" className="me-4 nav-link" onClick={()=>setCurrentTab("calculator")}>Calculator</NavLink>
+                            <NavLink to="attachments" className="me-4 nav-link" onClick={()=>setCurrentTab("attachments")}>Attachments</NavLink>
                             <Nav.Link className="me-4" onClick={()=>setShow(true)}>Information</Nav.Link>  
                             <NavDropdown className="me-4 px-2 py-1 rounded" style={{background:"lightgrey"}} title={fund} id="fund-dropdown" onSelect={onNavDropdownSelect}>
                                 <NavDropdown.Item eventKey="GMC">

@@ -57,6 +57,7 @@ const Attachments = () => {
     
     return (
         <Container style={{backgroundColor:"#fff"}} className="p-4 rounded-lg tight-container">
+            <h4 className="pb-2">{fund} Attachments</h4>
             {attachmentStore.loading && 
             <Loading />
             }
